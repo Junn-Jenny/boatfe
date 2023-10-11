@@ -1,13 +1,32 @@
-'use client'
+export const dynamic = 'force-dynamic'
 import Image from 'next/image'
-import GET_GRAPHQL from '@/data/gql/query'
-import GET_BOATS from '@/data/gql/boat'
+import { getClient } from '@/lib/client'
+import { gql } from "@apollo/client"
 import Link from 'next/link'
-import {useState} from 'react'
-export default function Page() {
-    const [search, setSearch] = useState('')  
-    let  data  = GET_GRAPHQL(GET_BOATS)
-    console.log(data)
+
+export const metadata = {
+  title: "BOATS",
+  description: "Boat Listing"
+}
+
+export default async function Page() {
+  const client = getClient()
+  const { data } = await client.query({
+    query: gql`
+      
+        query Boats {
+          boats(first: 10) {
+            data {
+              boat
+              description
+              id
+              image
+            }
+          }
+        }
+     `
+  })
+  
   return  (
     <div className="mt-5 px-4 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center">
@@ -16,8 +35,6 @@ export default function Page() {
           <p className="mt-2 text-lg text-gray-700">
             A list of boats which is top sale in the market today.
           </p>
-          <input onChange={(e) =>setSearch(e.target.value)}  className=' bg-gray-100 rounded px-4 py-1 my-2' type='text' placeholder='Search Boat'/>
-          
         </div>
       
       </div>
@@ -46,9 +63,7 @@ export default function Page() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {data.boats.data.filter((boat)=>{ 
-                    return search.toLowerCase() === '' ? boat : boat.boat.toLowerCase().includes(search)
-                }).map((boat) => (
+                {data.boats.data.map((boat) => (
                   <tr key={boat.id}>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 font-medium">{boat.id}</td>
                     <td>
