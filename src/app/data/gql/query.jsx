@@ -1,7 +1,7 @@
-//import { useSuspenseQuery } from "@apollo/experimental-nextjs-app-support/ssr";
-import { useQuery } from '@apollo/client';
+import { useSuspenseQuery } from "@apollo/client";
+//import { useQuery } from '@apollo/client';
 const GET_GRAPHQL = (query) => {
-    const { data }  = useQuery(query)
+    const { data }  = useSuspenseQuery(query)
     return data
 }
 
